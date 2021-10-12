@@ -1,5 +1,5 @@
 return {
-  presets: ["@babel/preset-env"],
+  presets: ["@babel/preset-react"],
   plugins: [
     "module-resolver",
     {
