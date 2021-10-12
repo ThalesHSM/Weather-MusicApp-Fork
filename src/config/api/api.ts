@@ -1,7 +1,30 @@
-import React from "react";
 import axios from "axios";
 
-export async function handleMusic() {
+async function handleTemperature(locationWoeid: any) {
+  const response = await axios.get(
+    `https://api.allorigins.win/get?url=${encodeURIComponent(
+      `https://www.metaweather.com/api/location/${locationWoeid}`
+    )}`
+  );
+
+  const getWeather = await JSON.parse(response.data["contents"]);
+
+  console.log(getWeather);
+  return getWeather;
+}
+
+async function handleLocationName(locationName: any) {
+  const response = await axios.get(
+    `https://api.allorigins.win/get?url=${encodeURIComponent(
+      `https://www.metaweather.com/api/location/search/?query=${locationName}`
+    )}`
+  );
+  const getWeather = await JSON.parse(response.data["contents"]);
+
+  return getWeather;
+}
+
+async function handleMusic() {
   try {
     const response = await axios.get("https://shazam.p.rapidapi.com/search", {
       headers: {
@@ -14,9 +37,12 @@ export async function handleMusic() {
         limit: "5",
       },
     });
+
     console.log(response.data);
-    return response;
+    return response.data;
   } catch (error) {
     console.log(error);
   }
 }
+
+export { handleTemperature, handleLocationName, handleMusic };
