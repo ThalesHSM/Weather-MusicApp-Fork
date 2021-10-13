@@ -53,6 +53,8 @@ export const StyledCelsiusFahrenheitDiv = styled.div`
 
 export const StyledMainDiv = styled.div`
   display: flex;
+  width: 100%;
+  flex: 1;
 `;
 
 export const StyledCityDiv = styled.div`
@@ -62,6 +64,7 @@ export const StyledCityDiv = styled.div`
   background-color: ${Colors.darkBlue};
   flex-direction: column;
   align-items: center;
+  position: fixed;
 `;
 
 export const StyledImg = styled.img`
@@ -88,10 +91,4 @@ export const StyledTodayWeatherName = styled.p`
 export const StyledIconAndCityNameDiv = styled.div`
   display: flex;
   align-items: center;
-`;
-
-export const StyledComponentsDiv = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
 `;

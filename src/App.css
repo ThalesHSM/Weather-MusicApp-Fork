@@ -4,10 +4,12 @@
 
 html,
 body,
+#root,
 #app,
 #app > div {
   display: flex;
   flex: 1;
+  width: 100%;
   background-color: #100d1d;
 }
 
