@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Input from "../../components/Input/Input";
-import { useWeather } from "../../context/WeatherContext";
 import { MdPlace } from "react-icons/md";
+import { Levels } from "react-activity";
+import "react-activity/dist/Levels.css";
 
 import Colors from "../../utils/colors";
 import {
   StyledCelsiusButton,
   StyledCelsiusFahrenheitDiv,
   StyledCityDiv,
-  StyledComponentsDiv,
   StyledFahrenheitButton,
   StyledIconAndCityNameDiv,
   StyledImg,
@@ -17,8 +17,10 @@ import {
   StyledTodayWeatherName,
 } from "./StyledHome";
 
-import { handleMusic, handleTemperature } from "../../config/api/api";
-import MusicCard from "../../components/MusicCard/MusicCard";
+import { useWeather } from "../../context/WeatherContext";
+
+import { handleTemperature } from "../../config/api/api";
+import Music from "../../components/MusicCard/Music";
 
 interface ICityWeather {
   cityName: string;
@@ -29,23 +31,17 @@ interface ICityWeather {
 }
 
 export default function HomeScreen() {
-  const { weatherCity, setWeatherCity } = useWeather();
+  const { weatherMusic, setWeatherMusic } = useWeather();
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [cityWeather, setCityWeather] = useState<ICityWeather>();
   const [isCelsius, setIsCelsius] = useState<boolean>(true);
-
-  // useEffect(() => {
-  //   async function abc() {
-  //     await handleTemperature("London");
-  //   }
-
-  //   abc();
-  // }, []);
 
   async function handleInputChoice(selectedOption: any) {
     setIsLoading(true);
 
     const getTemperature = await handleTemperature(selectedOption.value);
+
     setCityWeather({
       cityName: getTemperature.title,
       date: getTemperature.consolidated_weather[0].applicable_date
@@ -59,6 +55,7 @@ export default function HomeScreen() {
 
     setIsLoading(false);
   }
+
   function handleCelsiusFahrenheit() {
     setIsCelsius(!isCelsius);
   }
@@ -79,7 +76,9 @@ export default function HomeScreen() {
             °F
           </StyledFahrenheitButton>
         </StyledCelsiusFahrenheitDiv>
+
         <Input handleInputChoice={handleInputChoice} />
+
         {isLoading === false && cityWeather ? (
           <>
             <StyledImg src={cityWeather.weatherImage} alt="" />
@@ -90,8 +89,7 @@ export default function HomeScreen() {
               {isCelsius ? (
                 <>
                   <h1>
-                    {cityWeather.temperature
-                      .toString()
+                    {JSON.stringify(cityWeather.temperature)
                       .slice(0, 2)
                       .replace(".", "")}
                   </h1>
@@ -104,8 +102,8 @@ export default function HomeScreen() {
                       0,
                       2
                     )}
-                    °F
                   </h1>
+                  <h2> °F</h2>
                 </>
               )}
             </StyledMainTemperatureDiv>
@@ -123,13 +121,19 @@ export default function HomeScreen() {
             </StyledIconAndCityNameDiv>
           </>
         ) : (
-          <p></p>
+          <div style={{ display: "flex", flex: 1, alignItems: "center" }}>
+            <Levels color={Colors.white} size={32} speed={1} animating={true} />
+          </div>
         )}
       </StyledCityDiv>
 
-      <StyledComponentsDiv>
-        <MusicCard />
-      </StyledComponentsDiv>
+      {cityWeather ? (
+        <Music
+          weather={cityWeather}
+          isCelsius={isCelsius}
+          temperature={cityWeather.temperature}
+        />
+      ) : null}
     </StyledMainDiv>
   );
 }

@@ -1,31 +1,52 @@
 import React, { createContext, useContext, useState } from "react";
 
-interface IWeather {
-  city: string;
-  id: string | number[];
+interface IWeatherMusic {
+  id: string;
+  cityName: string;
   date: number;
   temperature: number;
-  music: string;
+  weatherImage: string;
+  weatherName: string;
+  musicAuthor: string;
+  musicCategory: string;
+  musicImage: string;
+  musicName: string;
+  musicSpotifyLink: string;
+  musicShazamLink: string;
   saved: boolean;
 }
 
 interface IWeatherContext {
-  weatherCity: IWeather[];
-  setWeatherCity: React.Dispatch<React.SetStateAction<IWeather[]>>;
+  weatherMusic: IWeatherMusic[];
+  setWeatherMusic: React.Dispatch<React.SetStateAction<IWeatherMusic[]>>;
 }
 
 export const WeatherContext = createContext<IWeatherContext>({
-  weatherCity: [
-    { city: "", id: "", date: 0, temperature: 0, music: "", saved: false },
+  weatherMusic: [
+    {
+      cityName: "",
+      id: "",
+      date: 0,
+      temperature: 0,
+      weatherImage: "",
+      weatherName: "",
+      musicAuthor: "",
+      musicCategory: "",
+      musicImage: "",
+      musicName: "",
+      musicSpotifyLink: "",
+      musicShazamLink: "",
+      saved: false,
+    },
   ],
-  setWeatherCity: () => {},
+  setWeatherMusic: () => {},
 });
 
 export default function WeatherProvider({ children }: any) {
-  const [weatherCity, setWeatherCity] = useState<IWeather[]>([]);
+  const [weatherMusic, setWeatherMusic] = useState<IWeatherMusic[]>([]);
 
   return (
-    <WeatherContext.Provider value={{ weatherCity, setWeatherCity }}>
+    <WeatherContext.Provider value={{ weatherMusic, setWeatherMusic }}>
       {children}
     </WeatherContext.Provider>
   );
@@ -36,6 +57,6 @@ export function useWeather() {
   if (!context) {
     throw new Error("UseWeather must be used within a WeatherProvider!");
   }
-  const { weatherCity, setWeatherCity } = context;
-  return { weatherCity, setWeatherCity };
+  const { weatherMusic, setWeatherMusic } = context;
+  return { weatherMusic, setWeatherMusic };
 }
