@@ -12,6 +12,7 @@ export const StyledCelsiusButton = styled.button<IButton>`
   border: none;
   cursor: pointer;
   margin-right: 5px;
+  margin-left: 40px;
 
   background-color: ${Colors.weakBlue};
   color: ${Colors.white};
@@ -48,13 +49,13 @@ export const StyledCelsiusFahrenheitDiv = styled.div`
   width: 100%;
   flex-direction: row;
   margin-top: 20px;
-  margin-left: 40px;
 `;
 
 export const StyledMainDiv = styled.div`
   display: flex;
   width: 100%;
   flex: 1;
+  flex-direction: column;
 `;
 
 export const StyledCityDiv = styled.div`
@@ -91,4 +92,27 @@ export const StyledTodayWeatherName = styled.p`
 export const StyledIconAndCityNameDiv = styled.div`
   display: flex;
   align-items: center;
+`;
+
+export const StyledFavoriteSongsDiv = styled.div`
+  display: flex;
+  flex: 1px;
+  justify-content: flex-end;
+  margin-right: 10px;
+  margin-top: -15px;
+`;
+
+export const StyledLoadingDiv = styled.div`
+  display: flex;
+  flex: 1;
+  align-items: center;
+  margin-bottom: 160px;
+`;
+
+export const StyledMusicLoadingDiv = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin-left: 500px;
 `;

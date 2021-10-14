@@ -18,7 +18,10 @@ async function HandleSetStorageItems(music: any) {
   if (citiesJSON !== null) {
     newArray = JSON.parse(citiesJSON);
     for (let i = 0; i < newArray.length; i++) {
-      if (newArray[i].id === music.id && newArray[i].id === music.date) {
+      if (
+        newArray[i].musicName === music.musicName &&
+        newArray[i].date === music.date
+      ) {
         return;
       }
     }
@@ -39,8 +42,8 @@ async function HandleRemoveStorageItem(music: any) {
       let storageArray = JSON.parse(citiesJSON);
 
       const alteredMusicArray = storageArray.filter(function (e: any) {
-        if (e.id === music.id && e.date === music.date) {
-          return e.id !== music.id && e.date !== music.date;
+        if (e.id === music.id) {
+          return e.id !== music.id;
         }
         return storageArray;
       });
