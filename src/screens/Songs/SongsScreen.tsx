@@ -10,7 +10,6 @@ import {
   StyledMessageDiv,
 } from "./StyledSongScreen";
 
-import Colors from "../../utils/colors";
 import { HandleRemoveStorageItem } from "../../config/api/api";
 import MusicCard from "../../components/MusicCard/MusicCard";
 
