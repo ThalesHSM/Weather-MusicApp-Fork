@@ -3,7 +3,6 @@ import Input from "../../components/Input/Input";
 import { MdPlace, MdHeadset } from "react-icons/md";
 import { Levels } from "react-activity";
 import "react-activity/dist/Levels.css";
-import { v4 as uuid } from "uuid";
 
 import Colors from "../../utils/colors";
 import {
@@ -25,6 +24,7 @@ import { handleMusic, handleTemperature } from "../../config/api/api";
 import { Link } from "react-router-dom";
 import { useWeather } from "../../context/WeatherContext";
 import MusicCard from "../../components/MusicCard/MusicCard";
+import { handleCreatedWeatherMusic } from "../../helpers/createdWeatherMusic";
 
 export default function HomeScreen() {
   const { weatherMusic, setWeatherMusic } = useWeather();
@@ -40,55 +40,40 @@ export default function HomeScreen() {
     setIsLoading(true);
 
     const getTemperature = await handleTemperature(selectedOption.value);
+
     const temperature = getTemperature.consolidated_weather[0].the_temp;
+
     let musicCategory = "";
-    if (temperature) {
-      if (temperature < 16) {
+
+    switch (true) {
+      case temperature < 16:
         musicCategory = "lofi";
-      }
-      if (temperature > 16 && temperature < 24) {
+        break;
+
+      case temperature < 24:
         musicCategory = "classical";
-      }
-      if (temperature > 24 && temperature < 32) {
+        break;
+
+      case temperature < 32:
         musicCategory = "pop";
-      }
-      if (temperature > 32) {
+
+        break;
+
+      case temperature > 32:
         musicCategory = "rock";
-      }
+        break;
+      default:
+        console.log(`Sorry, we are out of ${temperature}.`);
     }
 
-    const music = await handleMusic(musicCategory);
+    const music: any = await handleMusic(musicCategory);
 
     if (music !== undefined) {
-      let newArray: any = [];
-
-      for (let i = 0; i < 5; i++) {
-        newArray = [
-          ...newArray,
-          {
-            id: uuid(),
-            saved: false,
-            cityName: getTemperature.title,
-            date: getTemperature.consolidated_weather[0].applicable_date
-              .split("-")
-              .reverse()
-              .join("/"),
-            temperature: getTemperature.consolidated_weather[0].the_temp,
-            weatherImage: `https://www.metaweather.com/static/img/weather/${getTemperature.consolidated_weather[0].weather_state_abbr}.svg`,
-            weatherName:
-              getTemperature.consolidated_weather[0].weather_state_name,
-
-            musicAuthor: music[i]["track"]["subtitle"],
-            musicCategory: musicCategory,
-            musicImage: music[i]["track"]["images"]["coverart"],
-            musicName: music[i]["track"]["share"]["subject"],
-            musicSpotifyLink:
-              music[i]["track"]["hub"]["providers"][0]["actions"][0]["uri"],
-            musicShazamLink: music[i]["track"]["url"],
-          },
-        ];
-      }
-      setWeatherMusic(newArray);
+      setWeatherMusic(
+        music.map((item: any) =>
+          handleCreatedWeatherMusic(item, getTemperature, musicCategory)
+        )
+      );
     }
 
     setIsLoading(false);
