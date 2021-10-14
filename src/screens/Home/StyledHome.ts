@@ -116,3 +116,10 @@ export const StyledMusicLoadingDiv = styled.div`
   height: 100vh;
   margin-left: 500px;
 `;
+
+export const StyledMusicCardDiv = styled.div`
+  display: flex;
+  color: ${Colors.white};
+  flex-direction: column;
+  align-items: center;
+`;

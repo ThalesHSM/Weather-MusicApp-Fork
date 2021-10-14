@@ -24,25 +24,23 @@ function SongsScreen() {
     async function handleSongs() {
       const citiesJSON = await localStorage.getItem("@storage_Key");
 
-      if (citiesJSON !== null) {
+      if (citiesJSON) {
         const newArray = JSON.parse(citiesJSON);
 
-        setWeatherMusic(newArray);
+        return setWeatherMusic(newArray);
       }
-      if (citiesJSON === null) {
-        setWeatherMusic([]);
-      }
+      return setWeatherMusic([]);
     }
     handleSongs();
   }, []);
 
   async function removeItem(item: any) {
     await HandleRemoveStorageItem(item);
-    const alteredMusicArray = weatherMusic.filter(function (e: any) {
-      if (e.id === item.id) {
-        return e.id !== item.id;
+    const alteredMusicArray = weatherMusic.filter(function (music: any) {
+      if (music.id === item.id) {
+        return music.id !== item.id;
       }
-      return e;
+      return music;
     });
     setWeatherMusic(alteredMusicArray);
   }

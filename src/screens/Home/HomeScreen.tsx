@@ -16,6 +16,7 @@ import {
   StyledLoadingDiv,
   StyledMainDiv,
   StyledMainTemperatureDiv,
+  StyledMusicCardDiv,
   StyledMusicLoadingDiv,
   StyledTodayWeatherName,
 } from "./StyledHome";
@@ -68,13 +69,11 @@ export default function HomeScreen() {
 
     const music: any = await handleMusic(musicCategory);
 
-    if (music !== undefined) {
-      setWeatherMusic(
-        music.map((item: any) =>
-          handleCreatedWeatherMusic(item, getTemperature, musicCategory)
-        )
-      );
-    }
+    setWeatherMusic(
+      music.map((item: any) =>
+        handleCreatedWeatherMusic(item, getTemperature, musicCategory)
+      )
+    );
 
     setIsLoading(false);
   }
@@ -159,7 +158,7 @@ export default function HomeScreen() {
                     </>
                   ) : (
                     <>
-                      <h1 style={{ color: Colors.weakWhite }}>
+                      <h1>
                         {JSON.stringify(
                           weatherMusic[0].temperature * 1.8 + 32
                         ).slice(0, 2)}
@@ -197,26 +196,17 @@ export default function HomeScreen() {
         )}
       </StyledCityDiv>
 
-      <StyledMainDiv>
-        {!isLoading && weatherMusic && weatherMusic.length > 0 ? (
-          <div
-            style={{
-              display: "flex",
-              color: Colors.white,
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            {weatherMusic.map((item: any) => (
-              <MusicCard item={item} isCelsius={isCelsius} key={item.id} />
-            ))}
-          </div>
-        ) : (
-          <StyledMusicLoadingDiv>
-            <Levels color={Colors.white} size={32} speed={1} animating={true} />
-          </StyledMusicLoadingDiv>
-        )}
-      </StyledMainDiv>
+      {!isLoading && weatherMusic && weatherMusic.length > 0 ? (
+        <StyledMusicCardDiv>
+          {weatherMusic.map((item: any) => (
+            <MusicCard item={item} isCelsius={isCelsius} key={item.id} />
+          ))}
+        </StyledMusicCardDiv>
+      ) : (
+        <StyledMusicLoadingDiv>
+          <Levels color={Colors.white} size={32} speed={1} animating={true} />
+        </StyledMusicLoadingDiv>
+      )}
     </StyledMainDiv>
   );
 }

@@ -15,35 +15,35 @@ async function HandleSetStorageItems(music: any) {
     return;
   }
 
-  if (citiesJSON !== null) {
-    newArray = JSON.parse(citiesJSON);
-    for (let i = 0; i < newArray.length; i++) {
-      if (
-        newArray[i].musicName === music.musicName &&
-        newArray[i].date === music.date
-      ) {
-        return;
-      }
+  newArray = JSON.parse(citiesJSON);
+
+  for (let i = 0; i < newArray.length; i++) {
+    if (
+      newArray[i].musicName === music.musicName &&
+      newArray[i].date === music.date &&
+      newArray[i].cityName === music.cityName
+    ) {
+      return;
     }
-    newArray.push(music);
-
-    const stringifiedArray = JSON.stringify(newArray);
-
-    await localStorage.setItem("@storage_Key", stringifiedArray);
-    return;
   }
+  newArray.push(music);
+
+  const stringifiedArray = JSON.stringify(newArray);
+
+  await localStorage.setItem("@storage_Key", stringifiedArray);
+  return;
 }
 
 async function HandleRemoveStorageItem(music: any) {
   try {
     const citiesJSON = await localStorage.getItem("@storage_Key");
 
-    if (citiesJSON !== null) {
+    if (citiesJSON) {
       let storageArray = JSON.parse(citiesJSON);
 
-      const alteredMusicArray = storageArray.filter(function (e: any) {
-        if (e.id === music.id) {
-          return e.id !== music.id;
+      const alteredMusicArray = storageArray.filter(function (item: any) {
+        if (item.id === music.id) {
+          return item.id !== music.id;
         }
         return storageArray;
       });

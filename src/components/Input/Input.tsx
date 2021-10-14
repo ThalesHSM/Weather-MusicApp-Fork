@@ -12,7 +12,7 @@ function Input({ handleInputChoice }: IInput) {
     { value: 2459115, label: "New York" },
     { value: 1118370, label: "Tokyo" },
     { value: 455825, label: "Rio de Janeiro" },
-    { value: 455825, label: "Philadelphia" },
+    { value: 2471217, label: "Philadelphia" },
     { value: 44418, label: "London" },
   ]);
 

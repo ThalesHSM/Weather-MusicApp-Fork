@@ -127,17 +127,13 @@ function MusicCard({ isCelsius, item, removeItem, index }: IMusic) {
               >
                 <SiShazam size={30} color={Colors.weakWhite} />
               </a>
-
               <a
                 target="_blank"
                 rel="noopener noreferrer"
                 href={item.musicSpotifyLink}
+                style={{ marginLeft: 20 }}
               >
-                <FaSpotify
-                  size={30}
-                  color={Colors.weakWhite}
-                  style={{ marginLeft: 15 }}
-                />
+                <FaSpotify size={30} color={Colors.weakWhite} />
               </a>
             </div>
           </StyledMusicLinksDiv>
