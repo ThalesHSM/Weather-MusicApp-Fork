@@ -1,9 +1,10 @@
 import React from "react";
 import "./App.css";
-import HomeScreen from "./screens/Home/HomeScreen";
+
+import Routes from "./config/routes/routes";
 
 function App() {
-  return <HomeScreen />;
+  return <Routes />;
 }
 
 export default App;

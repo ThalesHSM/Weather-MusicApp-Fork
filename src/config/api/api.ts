@@ -1,22 +1,106 @@
-import React from "react";
 import axios from "axios";
 
-export async function handleMusic() {
+async function HandleSetStorageItems(music: any) {
+  let newArray = [];
+
+  const citiesJSON = await localStorage.getItem("@storage_Key");
+
+  if (citiesJSON === null) {
+    newArray = [music];
+
+    const stringifiedArray = JSON.stringify(newArray);
+
+    await localStorage.setItem("@storage_Key", stringifiedArray);
+
+    return;
+  }
+
+  newArray = JSON.parse(citiesJSON);
+
+  for (let i = 0; i < newArray.length; i++) {
+    if (
+      newArray[i].musicName === music.musicName &&
+      newArray[i].date === music.date &&
+      newArray[i].cityName === music.cityName
+    ) {
+      return;
+    }
+  }
+  newArray.push(music);
+
+  const stringifiedArray = JSON.stringify(newArray);
+
+  await localStorage.setItem("@storage_Key", stringifiedArray);
+  return;
+}
+
+async function HandleRemoveStorageItem(music: any) {
   try {
-    const response = await axios.get("https://shazam.p.rapidapi.com/search", {
-      headers: {
-        "x-rapidapi-host": "shazam.p.rapidapi.com",
-        "x-rapidapi-key": "4d1d2cfb2dmsh599a8dd3663b62cp1662b0jsneeb2c92903ed",
-      },
-      params: {
-        term: "rock",
-        offset: "0",
-        limit: "5",
-      },
-    });
-    console.log(response.data);
-    return response;
+    const citiesJSON = await localStorage.getItem("@storage_Key");
+
+    if (citiesJSON) {
+      let storageArray = JSON.parse(citiesJSON);
+
+      const alteredMusicArray = storageArray.filter(function (item: any) {
+        if (item.id === music.id) {
+          return item.id !== music.id;
+        }
+        return storageArray;
+      });
+
+      localStorage.setItem("@storage_Key", JSON.stringify(alteredMusicArray));
+    }
   } catch (error) {
     console.log(error);
   }
 }
+
+async function handleTemperature(locationWoeid: any) {
+  const response = await axios.get(
+    `https://api.allorigins.win/get?url=${encodeURIComponent(
+      `https://www.metaweather.com/api/location/${locationWoeid}`
+    )}`
+  );
+
+  const getWeather = await JSON.parse(response.data["contents"]);
+
+  return getWeather;
+}
+
+async function handleLocationName(locationName: any) {
+  const response = await axios.get(
+    `https://api.allorigins.win/get?url=${encodeURIComponent(
+      `https://www.metaweather.com/api/location/search/?query=${locationName}`
+    )}`
+  );
+  const getWeather = await JSON.parse(response.data["contents"]);
+
+  return getWeather;
+}
+
+async function handleMusic(musicStyle: string) {
+  try {
+    const response = await axios.get("https://shazam.p.rapidapi.com/search", {
+      headers: {
+        "x-rapidapi-host": "shazam.p.rapidapi.com",
+        "x-rapidapi-key": "b27dc01becmsh7a82312cc25826cp184f03jsn505f2ff8f29e",
+      },
+      params: {
+        term: musicStyle,
+        offset: "0",
+        limit: "5",
+      },
+    });
+    return response.data["tracks"]["hits"];
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export {
+  HandleSetStorageItems,
+  HandleRemoveStorageItem,
+  handleTemperature,
+  handleLocationName,
+  handleMusic,
+};
