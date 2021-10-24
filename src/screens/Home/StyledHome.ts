@@ -13,6 +13,7 @@ export const StyledCelsiusButton = styled.button<IButton>`
   cursor: pointer;
   margin-right: 5px;
   margin-left: 40px;
+  margin-top: -1px;
 
   background-color: ${Colors.weakBlue};
   color: ${Colors.white};
@@ -31,6 +32,7 @@ export const StyledFahrenheitButton = styled.button<IButton>`
   height: 40px;
   border: none;
   cursor: pointer;
+  margin-top: -1px;
 
   background-color: ${Colors.weakWhite};
   color: ${Colors.darkBlue};
@@ -42,6 +44,21 @@ export const StyledFahrenheitButton = styled.button<IButton>`
       background-color: ${Colors.weakBlue};
       color: ${Colors.white};
     `}
+`;
+
+export const StyledUserPhoto = styled.img`
+  width: 45px;
+  height: 45px;
+  margin-left: 10px;
+  margin-top: -4px;
+  border-radius: 22px;
+`;
+
+export const StyledLoginH3 = styled.h3`
+  color: ${Colors.white};
+  cursor: pointer;
+  margin-left: 10px;
+  margin-top: 7px;
 `;
 
 export const StyledCelsiusFahrenheitDiv = styled.div`

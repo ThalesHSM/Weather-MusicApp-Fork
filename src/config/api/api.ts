@@ -1,61 +1,42 @@
+import { doc, setDoc } from "@firebase/firestore";
 import axios from "axios";
+import { IWeatherMusic } from "../../context/WeatherContext";
+import { db } from "../Firebase/Firebase";
 
-async function HandleSetStorageItems(music: any) {
-  let newArray = [];
-
-  const citiesJSON = await localStorage.getItem("@storage_Key");
-
-  if (citiesJSON === null) {
-    newArray = [music];
-
-    const stringifiedArray = JSON.stringify(newArray);
-
-    await localStorage.setItem("@storage_Key", stringifiedArray);
-
-    return;
-  }
-
-  newArray = JSON.parse(citiesJSON);
-
-  for (let i = 0; i < newArray.length; i++) {
-    if (
-      newArray[i].musicName === music.musicName &&
-      newArray[i].date === music.date &&
-      newArray[i].cityName === music.cityName
-    ) {
-      return;
-    }
-  }
-  newArray.push(music);
-
-  const stringifiedArray = JSON.stringify(newArray);
-
-  await localStorage.setItem("@storage_Key", stringifiedArray);
-  return;
+interface IMusicFirebase {
+  newItem: IWeatherMusic;
 }
 
-async function HandleRemoveStorageItem(music: any) {
-  try {
-    const citiesJSON = await localStorage.getItem("@storage_Key");
+async function HandleSetFirebaseItems(
+  musicFirebase: IMusicFirebase[],
+  userId: string
+) {
+  if (userId) {
+    if (musicFirebase && musicFirebase !== null) {
+      try {
+        const musicRef = doc(db, "musics", userId);
 
-    if (citiesJSON) {
-      let storageArray = JSON.parse(citiesJSON);
-
-      const alteredMusicArray = storageArray.filter(function (item: any) {
-        if (item.id === music.id) {
-          return item.id !== music.id;
-        }
-        return storageArray;
-      });
-
-      localStorage.setItem("@storage_Key", JSON.stringify(alteredMusicArray));
+        await setDoc(musicRef, { musicFirebase });
+      } catch (error) {
+        console.log(error);
+      }
     }
+  }
+}
+
+async function HandleRemoveFirebaseItem(
+  musicFirebase: IWeatherMusic[],
+  userId: string
+) {
+  try {
+    const musicRef = doc(db, "musics", userId);
+    await setDoc(musicRef, { musicFirebase });
   } catch (error) {
     console.log(error);
   }
 }
 
-async function handleTemperature(locationWoeid: any) {
+async function handleTemperature(locationWoeid: number) {
   const response = await axios.get(
     `https://api.allorigins.win/get?url=${encodeURIComponent(
       `https://www.metaweather.com/api/location/${locationWoeid}`
@@ -67,7 +48,7 @@ async function handleTemperature(locationWoeid: any) {
   return getWeather;
 }
 
-async function handleLocationName(locationName: any) {
+async function handleLocationName(locationName: string) {
   const response = await axios.get(
     `https://api.allorigins.win/get?url=${encodeURIComponent(
       `https://www.metaweather.com/api/location/search/?query=${locationName}`
@@ -83,7 +64,7 @@ async function handleMusic(musicStyle: string) {
     const response = await axios.get("https://shazam.p.rapidapi.com/search", {
       headers: {
         "x-rapidapi-host": "shazam.p.rapidapi.com",
-        "x-rapidapi-key": "b27dc01becmsh7a82312cc25826cp184f03jsn505f2ff8f29e",
+        "x-rapidapi-key": "7f628bb505mshd79561989e6bf82p19fcdajsne7b7b6dcc481",
       },
       params: {
         term: musicStyle,
@@ -98,8 +79,8 @@ async function handleMusic(musicStyle: string) {
 }
 
 export {
-  HandleSetStorageItems,
-  HandleRemoveStorageItem,
+  HandleSetFirebaseItems,
+  HandleRemoveFirebaseItem,
   handleTemperature,
   handleLocationName,
   handleMusic,

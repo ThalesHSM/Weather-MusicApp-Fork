@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyledFeaturesDiv,
   StyledHeartIconDiv,
@@ -8,35 +8,67 @@ import {
   StyledMusicLinksDiv,
   StyledTemperatureImageDiv,
 } from "./StyledMusicCard";
-import {
-  HandleRemoveStorageItem,
-  HandleSetStorageItems,
-} from "../../config/api/api";
+import { HandleSetFirebaseItems } from "../../config/api/api";
 import Colors from "../../utils/colors";
 import { SiShazam } from "react-icons/si";
 import { FaSpotify, FaTrashAlt } from "react-icons/fa";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import _ from "lodash";
+import { IWeatherMusic } from "../../context/WeatherContext";
+
+import { useNewUser } from "../../context/UserContext";
 
 interface IMusic {
   isCelsius: boolean;
-  item: any;
+  item: IWeatherMusic;
+  musicFirebase?: any;
+  setMusicFirebase?: any;
   removeItem?: any;
-  index?: any;
+  index?: number;
 }
 
-function MusicCard({ isCelsius, item, removeItem, index }: IMusic) {
+function MusicCard({
+  isCelsius,
+  item,
+  removeItem,
+  index,
+  musicFirebase,
+  setMusicFirebase,
+}: IMusic) {
+  const { newUser } = useNewUser();
+
   const [isItemSaved, setIsItemSaved] = useState<boolean>(item.saved);
 
-  function handleSavedItem(item: any) {
-    setIsItemSaved(!isItemSaved);
-
-    const newItem = _.cloneDeep(item);
-    newItem.saved = !isItemSaved;
-    if (newItem.saved) {
-      return HandleSetStorageItems(newItem);
+  useEffect(() => {
+    async function setItem() {
+      await HandleSetFirebaseItems(musicFirebase, newUser.uid);
     }
-    return HandleRemoveStorageItem(newItem);
+    setItem();
+  }, [musicFirebase]);
+
+  async function handleSavedItem(item: IWeatherMusic) {
+    if (newUser.uid) {
+      setIsItemSaved(!isItemSaved);
+
+      const newItem = _.cloneDeep(item);
+      newItem.saved = !isItemSaved;
+
+      if (newItem.saved) {
+        if (musicFirebase && musicFirebase.length > 0) {
+          return setMusicFirebase([...musicFirebase, { newItem }]);
+        }
+        return setMusicFirebase([{ newItem }]);
+      }
+      const alteredMusicArray = musicFirebase.filter(function (item: {
+        newItem: IWeatherMusic;
+      }) {
+        return item.newItem.id !== newItem.id;
+      });
+
+      return setMusicFirebase(alteredMusicArray);
+    }
+
+    return alert("You must be logged in to save a song!");
   }
 
   return (
@@ -56,7 +88,7 @@ function MusicCard({ isCelsius, item, removeItem, index }: IMusic) {
         </StyledImageTextDiv>
         <StyledFeaturesDiv>
           <StyledHeartIconDiv>
-            {index >= 0 ? (
+            {index === 0 || (index && index >= 0) ? (
               <>
                 <AiFillHeart
                   size={36}
@@ -90,7 +122,6 @@ function MusicCard({ isCelsius, item, removeItem, index }: IMusic) {
               </>
             )}
           </StyledHeartIconDiv>
-          {}
           <p>
             Based on your temperature we recommend that you listen to{" "}
             {item.musicAuthor} ({item.musicCategory})
@@ -100,18 +131,12 @@ function MusicCard({ isCelsius, item, removeItem, index }: IMusic) {
             <div style={{ display: "flex" }}>
               {isCelsius ? (
                 <>
-                  <h1>
-                    {JSON.stringify(item.temperature)
-                      .slice(0, 2)
-                      .replace(".", "")}
-                  </h1>
+                  <h1>{item.temperature}</h1>
                   <h2>°C</h2>
                 </>
               ) : (
                 <>
-                  <h1>
-                    {JSON.stringify(item.temperature * 1.8 + 32).slice(0, 2)}
-                  </h1>
+                  <h1>{item.temperature * 1.8 + 32}</h1>
                   <h2>°F</h2>
                 </>
               )}

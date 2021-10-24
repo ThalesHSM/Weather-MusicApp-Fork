@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 
-interface IWeatherMusic {
+export interface IWeatherMusic {
   id: string;
   cityName: string;
   date: number;

@@ -1,8 +1,20 @@
 import React, { useEffect, useState } from "react";
-import Input from "../../components/Input/Input";
 import { MdPlace, MdHeadset } from "react-icons/md";
 import { Levels } from "react-activity";
 import "react-activity/dist/Levels.css";
+import { Link } from "react-router-dom";
+
+import { IWeatherMusic, useWeather } from "../../context/WeatherContext";
+import { useNewUser } from "../../context/UserContext";
+
+import { handleCreatedWeatherMusic } from "../../helpers/createdWeatherMusic";
+
+import { GoogleLogin } from "../../config/Firebase/Firebase";
+
+import { handleMusic, handleTemperature } from "../../config/api/api";
+
+import MusicCard from "../../components/MusicCard/MusicCard";
+import Input from "../../components/Input/Input";
 
 import Colors from "../../utils/colors";
 import {
@@ -14,30 +26,44 @@ import {
   StyledIconAndCityNameDiv,
   StyledImg,
   StyledLoadingDiv,
+  StyledLoginH3,
   StyledMainDiv,
   StyledMainTemperatureDiv,
   StyledMusicCardDiv,
   StyledMusicLoadingDiv,
   StyledTodayWeatherName,
+  StyledUserPhoto,
 } from "./StyledHome";
 
-import { handleMusic, handleTemperature } from "../../config/api/api";
-import { Link } from "react-router-dom";
-import { useWeather } from "../../context/WeatherContext";
-import MusicCard from "../../components/MusicCard/MusicCard";
-import { handleCreatedWeatherMusic } from "../../helpers/createdWeatherMusic";
-
-export default function HomeScreen() {
+export default function HomeScreen({ setIsLoggedIn }: any) {
   const { weatherMusic, setWeatherMusic } = useWeather();
+  const { newUser, setNewUser } = useNewUser();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isCelsius, setIsCelsius] = useState<boolean>(true);
+  const [musicFirebase, setMusicFirebase] = useState<any>(null);
 
   useEffect(() => {
     setWeatherMusic([]);
   }, []);
 
-  async function handleInputChoice(selectedOption: any) {
+  async function Login() {
+    const result = await GoogleLogin();
+    setIsLoggedIn(true);
+    if (result.user.uid && result.user.photoURL) {
+      setNewUser({
+        uid: result.user.uid,
+        avatarURL: result.user.photoURL,
+      });
+    } else {
+      alert("Login Error!");
+    }
+  }
+
+  async function handleInputChoice(selectedOption: {
+    label: string;
+    value: number;
+  }) {
     setIsLoading(true);
 
     const getTemperature = await handleTemperature(selectedOption.value);
@@ -68,9 +94,8 @@ export default function HomeScreen() {
     }
 
     const music: any = await handleMusic(musicCategory);
-
     setWeatherMusic(
-      music.map((item: any) =>
+      music.map((item: IWeatherMusic) =>
         handleCreatedWeatherMusic(item, getTemperature, musicCategory)
       )
     );
@@ -86,6 +111,12 @@ export default function HomeScreen() {
     <StyledMainDiv>
       <StyledCityDiv>
         <StyledCelsiusFahrenheitDiv>
+          {newUser.avatarURL ? (
+            <StyledUserPhoto src={newUser.avatarURL} alt="" />
+          ) : (
+            <StyledLoginH3 onClick={Login}>Login</StyledLoginH3>
+          )}
+
           <StyledCelsiusButton
             onClick={handleCelsiusFahrenheit}
             isCelsius={isCelsius}
@@ -99,11 +130,33 @@ export default function HomeScreen() {
             °F
           </StyledFahrenheitButton>
           <StyledFavoriteSongsDiv>
-            <Link
-              to={{ pathname: "/songs", state: { isCelsius: isCelsius } }}
-              style={{ textDecoration: "none" }}
-            >
-              <h3 style={{ cursor: "pointer", color: Colors.weakWhite }}>
+            {newUser.uid ? (
+              <Link
+                to={{ pathname: "/songs", state: { isCelsius: isCelsius } }}
+                style={{ textDecoration: "none" }}
+              >
+                <h3 style={{ cursor: "pointer", color: Colors.weakWhite }}>
+                  My favorite Songs
+                  <MdHeadset
+                    size={26}
+                    color={Colors.weakWhite}
+                    style={{
+                      marginRight: 15,
+                      alignSelf: "center",
+                      justifySelf: "center",
+                      marginBottom: -8,
+                      marginLeft: 10,
+                    }}
+                  />
+                </h3>
+              </Link>
+            ) : (
+              <h3
+                style={{ cursor: "pointer", color: Colors.weakWhite }}
+                onClick={() => {
+                  alert("You must be logged in to see your saved musics!");
+                }}
+              >
                 My favorite Songs
                 <MdHeadset
                   size={26}
@@ -117,7 +170,7 @@ export default function HomeScreen() {
                   }}
                 />
               </h3>
-            </Link>
+            )}
           </StyledFavoriteSongsDiv>
         </StyledCelsiusFahrenheitDiv>
 
@@ -149,20 +202,12 @@ export default function HomeScreen() {
                 <StyledMainTemperatureDiv>
                   {isCelsius ? (
                     <>
-                      <h1>
-                        {JSON.stringify(weatherMusic[0].temperature)
-                          .slice(0, 2)
-                          .replace(".", "")}
-                      </h1>
+                      <h1>{weatherMusic[0].temperature}</h1>
                       <h2> °C</h2>
                     </>
                   ) : (
                     <>
-                      <h1>
-                        {JSON.stringify(
-                          weatherMusic[0].temperature * 1.8 + 32
-                        ).slice(0, 2)}
-                      </h1>
+                      <h1>{weatherMusic[0].temperature * 1.8 + 32}</h1>
                       <h2> °F</h2>
                     </>
                   )}
@@ -199,7 +244,13 @@ export default function HomeScreen() {
       {!isLoading && weatherMusic && weatherMusic.length > 0 ? (
         <StyledMusicCardDiv>
           {weatherMusic.map((item: any) => (
-            <MusicCard item={item} isCelsius={isCelsius} key={item.id} />
+            <MusicCard
+              item={item}
+              key={item.id || item.newItem.id}
+              isCelsius={isCelsius}
+              musicFirebase={musicFirebase}
+              setMusicFirebase={setMusicFirebase}
+            />
           ))}
         </StyledMusicCardDiv>
       ) : (
