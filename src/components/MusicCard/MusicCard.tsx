@@ -55,14 +55,16 @@ function MusicCard({
 
       if (newItem.saved) {
         if (musicFirebase && musicFirebase.length > 0) {
-          return setMusicFirebase([...musicFirebase, { newItem }]);
+          return setMusicFirebase([...musicFirebase, newItem]);
         }
-        return setMusicFirebase([{ newItem }]);
+
+        return setMusicFirebase([newItem]);
       }
-      const alteredMusicArray = musicFirebase.filter(function (item: {
-        newItem: IWeatherMusic;
-      }) {
-        return item.newItem.id !== newItem.id;
+
+      const alteredMusicArray = musicFirebase.filter(function (
+        item: IWeatherMusic
+      ) {
+        return item.id !== newItem.id;
       });
 
       return setMusicFirebase(alteredMusicArray);

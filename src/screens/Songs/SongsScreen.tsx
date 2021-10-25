@@ -44,7 +44,7 @@ function SongsScreen() {
           return;
         } else {
           // doc.data() will be undefined in this case
-          console.log("No such document!");
+          alert("Error! We didn't find any saved item.");
         }
       }
     }
@@ -52,9 +52,8 @@ function SongsScreen() {
   }, []);
 
   async function removeItem(item: IWeatherMusic) {
-    console.log(item);
     const musicFirebase = weatherMusic.filter(function (music: any) {
-      return music.newItem.id !== item.id;
+      return music.id !== item.id;
     });
 
     await HandleRemoveFirebaseItem(musicFirebase, newUser.uid);
@@ -94,9 +93,9 @@ function SongsScreen() {
             <>
               {weatherMusic.map((item: any, index: number) => (
                 <MusicCard
-                  item={item.newItem}
+                  item={item}
                   isCelsius={isCelsius}
-                  key={item.newItem.id}
+                  key={item.id}
                   removeItem={removeItem}
                   index={index}
                 />

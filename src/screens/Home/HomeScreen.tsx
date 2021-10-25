@@ -49,12 +49,12 @@ export default function HomeScreen({ setIsLoggedIn }: any) {
 
   async function Login() {
     const result = await GoogleLogin();
-    setIsLoggedIn(true);
     if (result.user.uid && result.user.photoURL) {
       setNewUser({
         uid: result.user.uid,
         avatarURL: result.user.photoURL,
       });
+      setIsLoggedIn(true);
     } else {
       alert("Login Error!");
     }
@@ -246,7 +246,7 @@ export default function HomeScreen({ setIsLoggedIn }: any) {
           {weatherMusic.map((item: any) => (
             <MusicCard
               item={item}
-              key={item.id || item.newItem.id}
+              key={item.id}
               isCelsius={isCelsius}
               musicFirebase={musicFirebase}
               setMusicFirebase={setMusicFirebase}

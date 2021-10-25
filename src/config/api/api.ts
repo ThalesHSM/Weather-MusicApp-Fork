@@ -24,6 +24,7 @@ async function HandleSetFirebaseItems(
   }
 }
 
+// @todo -> refact this function to remove single object instead of entire array when removing song
 async function HandleRemoveFirebaseItem(
   musicFirebase: IWeatherMusic[],
   userId: string
@@ -59,6 +60,7 @@ async function handleLocationName(locationName: string) {
   return getWeather;
 }
 
+// @todo -> Add env variables
 async function handleMusic(musicStyle: string) {
   try {
     const response = await axios.get("https://shazam.p.rapidapi.com/search", {
