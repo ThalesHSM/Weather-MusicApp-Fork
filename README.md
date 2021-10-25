@@ -30,3 +30,8 @@ Project that allows you to search cities, see the temperature and receive a temp
 + Clone the repository
 + Run yarn
 + Run Yarn start
+
+## Todos
+- [ ] Add relative path
+- [ ] Add env variables
+- [ ] Refact firebase function to edit single object instead of entire array when favoriting song
