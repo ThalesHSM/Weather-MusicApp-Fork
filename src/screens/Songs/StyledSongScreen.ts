@@ -12,6 +12,7 @@ export const StyledMainDiv = styled.div`
 export const StyledGoBackDiv = styled.div`
   display: flex;
   width: 100%;
+  align-items: center;
 `;
 
 export const StyledMessageDiv = styled.div`

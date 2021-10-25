@@ -3,7 +3,7 @@ import { v4 as uuid } from "uuid";
 export function handleCreatedWeatherMusic(
   item: any,
   getTemperature: any,
-  musicCategory: any
+  musicCategory: string
 ) {
   return {
     id: uuid(),
@@ -13,7 +13,9 @@ export function handleCreatedWeatherMusic(
       .split("-")
       .reverse()
       .join("/"),
-    temperature: getTemperature.consolidated_weather[0].the_temp,
+    temperature: JSON.stringify(getTemperature.consolidated_weather[0].the_temp)
+      .slice(0, 2)
+      .replace(".", ""),
     weatherImage: `https://www.metaweather.com/static/img/weather/${getTemperature.consolidated_weather[0].weather_state_abbr}.svg`,
     weatherName: getTemperature.consolidated_weather[0].weather_state_name,
 

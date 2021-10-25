@@ -3,12 +3,13 @@ import AsyncSelect from "react-select/async";
 import { handleLocationName } from "../../config/api/api";
 import { customStyles } from "./StyledInput";
 
-interface IInput {
-  handleInputChoice: any;
+interface IOptions {
+  value: number;
+  label: string;
 }
 
-function Input({ handleInputChoice }: IInput) {
-  const [options, setOptions] = useState<any>([
+function Input({ handleInputChoice }: any) {
+  const [options, setOptions] = useState<IOptions[]>([
     { value: 2459115, label: "New York" },
     { value: 1118370, label: "Tokyo" },
     { value: 455825, label: "Rio de Janeiro" },
@@ -16,7 +17,7 @@ function Input({ handleInputChoice }: IInput) {
     { value: 44418, label: "London" },
   ]);
 
-  async function handleInputChange(cityLetter: any) {
+  async function handleInputChange(cityLetter: string) {
     if (cityLetter) {
       const CitiesList = await handleLocationName(cityLetter);
       try {
@@ -41,7 +42,7 @@ function Input({ handleInputChoice }: IInput) {
 
   const filterCities = (inputValue: string) => {
     try {
-      return options.filter((i: any) =>
+      return options.filter((i: IOptions) =>
         i.label.toLowerCase().includes(inputValue.toLowerCase())
       );
     } catch (error) {
@@ -49,7 +50,7 @@ function Input({ handleInputChoice }: IInput) {
     }
   };
 
-  function loadOptions(inputValue: any, callback: any) {
+  function loadOptions(inputValue: string, callback: any) {
     setTimeout(() => {
       callback(filterCities(inputValue));
     }, 1000);
